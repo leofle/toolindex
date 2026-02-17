@@ -1,0 +1,114 @@
+{
+  "manifest_version": "0.1",
+  "origin": "https://shop.example.com",
+  "tools": [
+    {
+      "name": "search_products",
+      "description": "Search the product catalog by keyword, category, or price range. Returns a paginated list of matching products with thumbnails and pricing.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string", "description": "Free-text search query." },
+          "category": { "type": "string", "description": "Category slug to filter by." },
+          "min_price": { "type": "number", "minimum": 0, "description": "Minimum price in USD." },
+          "max_price": { "type": "number", "minimum": 0, "description": "Maximum price in USD." },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "per_page": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 }
+        },
+        "required": ["query"],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "price": { "type": "number" },
+                "currency": { "type": "string" },
+                "image_url": { "type": "string", "format": "uri" },
+                "in_stock": { "type": "boolean" }
+              }
+            }
+          },
+          "total": { "type": "integer" },
+          "page": { "type": "integer" }
+        },
+        "required": ["results", "total", "page"],
+        "additionalProperties": false
+      },
+      "risk_level": "low",
+      "requires_user_confirm": false,
+      "pricing": { "model": "free" },
+      "tags": ["ecommerce", "search", "catalog"],
+      "version": "1.0.0"
+    },
+    {
+      "name": "add_to_cart",
+      "description": "Add a product to the authenticated user's shopping cart. Specify the product ID and quantity.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "product_id": { "type": "string", "description": "The product to add." },
+          "quantity": { "type": "integer", "minimum": 1, "default": 1, "description": "Number of units." }
+        },
+        "required": ["product_id"],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "cart_id": { "type": "string" },
+          "item_count": { "type": "integer" },
+          "subtotal": { "type": "number" },
+          "currency": { "type": "string" }
+        },
+        "required": ["cart_id", "item_count", "subtotal", "currency"],
+        "additionalProperties": false
+      },
+      "risk_level": "medium",
+      "requires_user_confirm": false,
+      "pricing": { "model": "free" },
+      "tags": ["ecommerce", "cart"],
+      "version": "1.0.0"
+    },
+    {
+      "name": "checkout",
+      "description": "Initiate checkout for the current cart. Creates an order and charges the user's default payment method. This is a financial transaction.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "shipping_address_id": { "type": "string", "description": "Saved address to ship to." },
+          "payment_method_id": { "type": "string", "description": "Saved payment method to charge." },
+          "promo_code": { "type": "string", "description": "Optional promotional code." }
+        },
+        "required": ["shipping_address_id", "payment_method_id"],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "order_id": { "type": "string" },
+          "total": { "type": "number" },
+          "currency": { "type": "string" },
+          "estimated_delivery": { "type": "string", "format": "date" }
+        },
+        "required": ["order_id", "total", "currency"],
+        "additionalProperties": false
+      },
+      "risk_level": "high",
+      "requires_user_confirm": true,
+      "pricing": { "model": "free" },
+      "tags": ["ecommerce", "checkout", "payment"],
+      "version": "1.0.0"
+    }
+  ],
+  "auth": {
+    "requires_login": true,
+    "oauth_scopes": ["cart:write", "orders:write", "profile:read"]
+  }
+}

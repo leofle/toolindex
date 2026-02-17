@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://toolindex.dev/schemas/webmcp/v0.1/manifest.json",
+  "title": "WebMCP Manifest v0.1",
+  "description": "Specification for /.well-known/webmcp.json — a machine-readable manifest that advertises MCP-compatible tools exposed by a web origin.",
+  "type": "object",
+  "required": ["manifest_version", "origin", "tools", "auth"],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "const": "0.1",
+      "description": "The version of the WebMCP manifest specification this document conforms to."
+    },
+    "origin": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://",
+      "description": "The canonical HTTPS origin that serves this manifest. Must match the origin of the /.well-known/webmcp.json URL."
+    },
+    "tools": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The set of tools this origin exposes to MCP-compatible agents.",
+      "items": {
+        "$ref": "#/$defs/Tool"
+      }
+    },
+    "auth": {
+      "$ref": "#/$defs/Auth",
+      "description": "Authentication requirements for invoking the tools declared in this manifest."
+    },
+    "attestation": {
+      "$ref": "#/$defs/Attestation",
+      "description": "Optional cryptographic attestation that allows agents to verify the manifest has not been tampered with."
+    }
+  },
+  "$defs": {
+    "Tool": {
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "input_schema",
+        "output_schema",
+        "risk_level",
+        "requires_user_confirm",
+        "pricing",
+        "tags",
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "description": "A unique, snake_case identifier for the tool. Must be unique within this manifest."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "description": "A human- and agent-readable description of what the tool does, its side effects, and when to use it."
+        },
+        "input_schema": {
+          "$ref": "#/$defs/JsonSchemaObject",
+          "description": "A JSON Schema (draft 2020-12 compatible) object describing the tool's input parameters."
+        },
+        "output_schema": {
+          "$ref": "#/$defs/JsonSchemaObject",
+          "description": "A JSON Schema (draft 2020-12 compatible) object describing the shape of the tool's successful response."
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Declares the risk tier of the tool. low = read-only/informational. medium = writes data the user owns. high = financial transactions or irreversible mutations. critical = security-sensitive operations (delete account, transfer ownership)."
+        },
+        "requires_user_confirm": {
+          "type": "boolean",
+          "description": "When true, the agent MUST present the tool invocation to the user for explicit approval before executing."
+        },
+        "pricing": {
+          "$ref": "#/$defs/Pricing",
+          "description": "Describes the cost model for invoking this tool."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+          },
+          "uniqueItems": true,
+          "description": "Freeform tags for discovery and categorization. Lowercase, hyphens and underscores allowed."
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "description": "Semantic version of this individual tool (e.g. \"1.0.0\"). Independent of manifest_version."
+        }
+      }
+    },
+    "Pricing": {
+      "type": "object",
+      "required": ["model"],
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "type": "string",
+          "enum": ["free", "freemium", "paid", "per_call"],
+          "description": "The pricing model. free = no cost. freemium = free tier with paid upgrades. paid = requires active subscription. per_call = billed per invocation."
+        },
+        "cost_estimate": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Optional human-readable cost hint, e.g. \"$0.01 per call\" or \"Free up to 100 calls/day\"."
+        }
+      }
+    },
+    "Auth": {
+      "type": "object",
+      "required": ["requires_login"],
+      "additionalProperties": false,
+      "properties": {
+        "requires_login": {
+          "type": "boolean",
+          "description": "Whether invoking any tool in this manifest requires an authenticated session."
+        },
+        "oauth_scopes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "description": "OAuth 2.0 scopes the agent should request when authenticating. Only meaningful when requires_login is true."
+        }
+      }
+    },
+    "Attestation": {
+      "type": "object",
+      "required": ["algo", "public_key_jwk", "signature", "signed_fields"],
+      "additionalProperties": false,
+      "description": "Cryptographic attestation allowing agents to verify manifest integrity.",
+      "properties": {
+        "algo": {
+          "type": "string",
+          "enum": ["ES256", "RS256", "EdDSA"],
+          "description": "The signing algorithm used."
+        },
+        "public_key_jwk": {
+          "type": "object",
+          "description": "The public key in JWK (RFC 7517) format used to verify the signature.",
+          "required": ["kty"],
+          "properties": {
+            "kty": {
+              "type": "string",
+              "description": "Key type (e.g. EC, RSA, OKP)."
+            },
+            "crv": {
+              "type": "string",
+              "description": "Curve name, required for EC and OKP keys."
+            },
+            "x": {
+              "type": "string",
+              "description": "X coordinate (base64url)."
+            },
+            "y": {
+              "type": "string",
+              "description": "Y coordinate (base64url), required for EC keys."
+            },
+            "n": {
+              "type": "string",
+              "description": "RSA modulus (base64url)."
+            },
+            "e": {
+              "type": "string",
+              "description": "RSA exponent (base64url)."
+            }
+          },
+          "additionalProperties": false
+        },
+        "signature": {
+          "type": "string",
+          "description": "Base64url-encoded signature over the canonical JSON serialization of the fields listed in signed_fields."
+        },
+        "signed_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["manifest_version", "origin", "tools", "auth"]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Top-level manifest fields included in the signature. The signature is computed over the JSON-canonicalized (RFC 8785) concatenation of these fields in the order listed."
+        }
+      }
+    },
+    "JsonSchemaObject": {
+      "type": "object",
+      "required": ["type", "properties"],
+      "description": "An inline JSON Schema object describing a tool parameter or response shape. Must be of type \"object\".",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "object"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "additionalProperties": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
