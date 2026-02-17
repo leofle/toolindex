@@ -6,8 +6,11 @@ import { registerRoutes } from "./routes";
 async function main() {
   const app = Fastify({ logger: true });
 
+  const webOrigin = process.env.WEB_ORIGIN ?? "http://localhost:3000";
+  const allowedOrigins = webOrigin.split(",").map((o) => o.trim());
+
   await app.register(cors, {
-    origin: process.env.WEB_ORIGIN ?? "http://localhost:3000",
+    origin: allowedOrigins,
   });
 
   await app.register(rateLimit, {
