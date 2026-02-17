@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Origin {
+  id           String   @id @default(cuid())
+  origin       String   @unique
+  status       String   @default("invalid") // verified | invalid | stale
+  attested     Boolean  @default(false)
+  firstSeen    DateTime @default(now())
+  lastChecked  DateTime @default(now())
+  lastError    String?
+  manifestJson String?  // stored as JSON string
+
+  tools  Tool[]
+  checks Check[]
+}
+
+model Tool {
+  id                 String  @id @default(cuid())
+  originId           String
+  name               String
+  description        String
+  version            String
+  tags               String  // JSON array stored as string
+  riskLevel          String
+  requiresUserConfirm Boolean
+
+  origin Origin @relation(fields: [originId], references: [id], onDelete: Cascade)
+
+  @@index([name])
+}
+
+model Check {
+  id        String   @id @default(cuid())
+  originId  String
+  checkedAt DateTime @default(now())
+  ok        Boolean
+  error     String?
+  latencyMs Int
+
+  origin Origin @relation(fields: [originId], references: [id], onDelete: Cascade)
+}

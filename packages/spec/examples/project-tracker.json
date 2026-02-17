@@ -1,0 +1,60 @@
+{
+  "manifest_version": "0.1",
+  "origin": "https://tracker.example.com",
+  "updated_at": "2025-06-15T12:00:00Z",
+  "tools": [
+    {
+      "name": "create_issue",
+      "description": "Create a new issue in the project tracker.",
+      "version": "2.1.0",
+      "tags": ["issues", "write"],
+      "risk_level": "medium",
+      "requires_user_confirm": true,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "body": { "type": "string" },
+          "priority": { "type": "string", "enum": ["low", "medium", "high"] }
+        },
+        "required": ["title"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "url": { "type": "string" }
+        },
+        "required": ["id", "url"]
+      },
+      "pricing": { "model": "per_call", "price_usd": 0.01 }
+    },
+    {
+      "name": "list_issues",
+      "description": "List all open issues with optional filters.",
+      "version": "2.1.0",
+      "tags": ["issues", "read"],
+      "risk_level": "low",
+      "requires_user_confirm": false,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["open", "closed", "all"] },
+          "limit": { "type": "number" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "issues": { "type": "array" }
+        },
+        "required": ["issues"]
+      },
+      "pricing": { "model": "free" }
+    }
+  ],
+  "auth": {
+    "requires_login": true,
+    "oauth_scopes": ["read", "write"]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "manifest_version": "0.1",
+  "origin": "https://shop.example.com",
+  "updated_at": "2025-07-01T08:30:00Z",
+  "tools": [
+    {
+      "name": "search_products",
+      "description": "Search the product catalog by name, category, or keyword.",
+      "version": "3.0.0",
+      "tags": ["search", "products", "read"],
+      "risk_level": "low",
+      "requires_user_confirm": false,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string" },
+          "category": { "type": "string" },
+          "max_price": { "type": "number" }
+        },
+        "required": ["query"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "products": { "type": "array" }
+        },
+        "required": ["products"]
+      },
+      "pricing": { "model": "free" }
+    },
+    {
+      "name": "place_order",
+      "description": "Place an order for a product. Requires user confirmation.",
+      "version": "3.0.0",
+      "tags": ["orders", "write", "payment"],
+      "risk_level": "high",
+      "requires_user_confirm": true,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "product_id": { "type": "string" },
+          "quantity": { "type": "number" },
+          "shipping_address": { "type": "string" }
+        },
+        "required": ["product_id", "quantity"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "order_id": { "type": "string" },
+          "total_usd": { "type": "number" }
+        },
+        "required": ["order_id", "total_usd"]
+      },
+      "pricing": { "model": "per_call", "price_usd": 0.05, "notes": "Charged per order placed" }
+    }
+  ],
+  "auth": {
+    "requires_login": true,
+    "oauth_scopes": ["read", "orders"]
+  }
+}

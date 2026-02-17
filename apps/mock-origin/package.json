@@ -1,0 +1,15 @@
+{
+  "name": "@toolindex/mock-origin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx serve.ts"
+  },
+  "dependencies": {
+    "fastify": "^5.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

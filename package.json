@@ -4,6 +4,11 @@
   "scripts": {
     "build": "pnpm -r build",
     "dev": "pnpm -r --parallel dev",
+    "dev:api": "pnpm --filter @toolindex/api dev",
+    "dev:web": "pnpm --filter @toolindex/web dev",
+    "db:migrate": "pnpm --filter @toolindex/api db:migrate",
+    "db:push": "pnpm --filter @toolindex/api db:push",
+    "db:seed": "pnpm --filter @toolindex/api db:seed",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test"
   },

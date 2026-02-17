@@ -1,0 +1,34 @@
+{
+  "manifest_version": "0.1",
+  "origin": "https://docs.example.com",
+  "updated_at": "2025-06-01T00:00:00Z",
+  "tools": [
+    {
+      "name": "search_docs",
+      "description": "Search documentation pages by keyword and return matching results.",
+      "version": "1.0.0",
+      "tags": ["search", "docs"],
+      "risk_level": "low",
+      "requires_user_confirm": false,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string" },
+          "limit": { "type": "number" }
+        },
+        "required": ["query"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "results": { "type": "array" }
+        },
+        "required": ["results"]
+      },
+      "pricing": { "model": "free" }
+    }
+  ],
+  "auth": {
+    "requires_login": false
+  }
+}
