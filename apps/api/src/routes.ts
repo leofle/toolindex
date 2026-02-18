@@ -1,7 +1,11 @@
 import type { FastifyInstance } from "fastify";
+import type { Origin, Tool } from "@prisma/client";
 import { validateManifest } from "@toolindex/validator";
 import { prisma } from "./db";
 import { renderBadge } from "./badge";
+
+type OriginWithTools = Origin & { tools: Tool[] };
+type ToolWithOrigin = Tool & { origin: OriginWithTools };
 
 function normalizeOrigin(raw: string): string {
   let o = raw.trim().replace(/\/+$/, "");
@@ -130,11 +134,11 @@ export async function registerRoutes(app: FastifyInstance) {
         take: 50,
       });
       return reply.send(
-        origins.map((o) => ({
+        origins.map((o: OriginWithTools) => ({
           origin: o.origin,
           status: o.status,
           tool_count: o.tools.length,
-          top_tools: o.tools.slice(0, 3).map((t) => t.name),
+          top_tools: o.tools.slice(0, 3).map((t: Tool) => t.name),
         }))
       );
     }
@@ -174,7 +178,7 @@ export async function registerRoutes(app: FastifyInstance) {
           origin: o.origin,
           status: o.status,
           tool_count: o.tools.length,
-          top_tools: o.tools.slice(0, 3).map((t) => t.name),
+          top_tools: o.tools.slice(0, 3).map((t: Tool) => t.name),
         });
       }
     }
@@ -186,7 +190,7 @@ export async function registerRoutes(app: FastifyInstance) {
           origin: t.origin.origin,
           status: t.origin.status,
           tool_count: t.origin.tools.length,
-          top_tools: t.origin.tools.slice(0, 3).map((tt) => tt.name),
+          top_tools: t.origin.tools.slice(0, 3).map((tt: Tool) => tt.name),
         });
       }
     }
@@ -214,7 +218,7 @@ export async function registerRoutes(app: FastifyInstance) {
       last_checked: record.lastChecked,
       last_error: record.lastError,
       manifest: record.manifestJson ? JSON.parse(record.manifestJson) : null,
-      tools: record.tools.map((t) => ({
+      tools: record.tools.map((t: Tool) => ({
         name: t.name,
         description: t.description,
         version: t.version,
