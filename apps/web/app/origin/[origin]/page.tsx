@@ -29,7 +29,7 @@ export default function OriginPage() {
   const origin = decodeURIComponent(params.origin as string);
   const [data, setData] = useState<OriginData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<string | false>(false);
 
   useEffect(() => {
     fetch(`${API_BASE}/origin/${encodeURIComponent(origin)}`)
@@ -54,12 +54,16 @@ export default function OriginPage() {
     return <p className="muted">Loading...</p>;
   }
 
-  const badgeUrl = `${API_BASE}/badge?origin=${encodeURIComponent(data.origin)}`;
-  const badgeSnippet = `<img src="${badgeUrl}" alt="WebMCP status" />`;
+  const encodedOrigin = encodeURIComponent(data.origin);
+  const badgeUrl = `${API_BASE}/badge?origin=${encodedOrigin}`;
+  const shieldsUrl = `https://img.shields.io/badge/WebMCP-${data.status}-${data.status === "verified" ? "brightgreen" : data.status === "invalid" ? "red" : "gray"}`;
+  const registryUrl = "https://www.webmcpregistry.org";
+  const markdownSnippet = `[![WebMCP ${data.status}](${shieldsUrl})](${registryUrl})`;
+  const htmlSnippet = `<a href="${registryUrl}"><img src="${shieldsUrl}" alt="WebMCP ${data.status}" /></a>`;
 
-  function copySnippet() {
-    navigator.clipboard.writeText(badgeSnippet);
-    setCopied(true);
+  function copySnippet(text: string, label: string) {
+    navigator.clipboard.writeText(text);
+    setCopied(label);
     setTimeout(() => setCopied(false), 2000);
   }
 
@@ -94,16 +98,28 @@ export default function OriginPage() {
       {/* Badge */}
       <div className="card">
         <p className="section-title">Badge</p>
-        <div style={{ marginBottom: "0.75rem" }}>
+        <div style={{ marginBottom: "1rem" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={badgeUrl} alt="WebMCP badge" />
+          <img src={shieldsUrl} alt={`WebMCP ${data.status}`} />
         </div>
-        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-          <pre style={{ flex: 1, margin: 0, fontSize: "0.78rem" }}>
-            <code>{badgeSnippet}</code>
+
+        <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>Markdown</p>
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginBottom: "0.75rem" }}>
+          <pre style={{ flex: 1, margin: 0, fontSize: "0.78rem", overflow: "auto" }}>
+            <code>{markdownSnippet}</code>
           </pre>
-          <button onClick={copySnippet} style={{ whiteSpace: "nowrap", fontSize: "0.8rem", padding: "0.4rem 0.8rem" }}>
-            {copied ? "Copied!" : "Copy"}
+          <button onClick={() => copySnippet(markdownSnippet, "md")} style={{ whiteSpace: "nowrap", fontSize: "0.8rem", padding: "0.4rem 0.8rem" }}>
+            {copied === "md" ? "Copied!" : "Copy"}
+          </button>
+        </div>
+
+        <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>HTML</p>
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <pre style={{ flex: 1, margin: 0, fontSize: "0.78rem", overflow: "auto" }}>
+            <code>{htmlSnippet}</code>
+          </pre>
+          <button onClick={() => copySnippet(htmlSnippet, "html")} style={{ whiteSpace: "nowrap", fontSize: "0.8rem", padding: "0.4rem 0.8rem" }}>
+            {copied === "html" ? "Copied!" : "Copy"}
           </button>
         </div>
       </div>
