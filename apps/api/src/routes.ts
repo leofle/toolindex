@@ -268,8 +268,10 @@ export async function registerRoutes(app: FastifyInstance) {
     const record = await prisma.origin.findUnique({ where: { origin } });
     const status = record?.status ?? "unknown";
 
-    reply.header("Content-Type", "image/svg+xml");
+    reply.header("Content-Type", "image/svg+xml;charset=utf-8");
     reply.header("Cache-Control", "public, max-age=300, s-maxage=300");
+    reply.header("Access-Control-Allow-Origin", "*");
+    reply.header("Cross-Origin-Resource-Policy", "cross-origin");
     return reply.send(renderBadge(status));
   });
 }
