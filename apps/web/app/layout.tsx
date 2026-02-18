@@ -3,7 +3,7 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ToolIndex — WebMCP Registry",
+  title: "Web MCP Registry",
   description: "Discover and verify WebMCP tool manifests",
 };
 
@@ -17,7 +17,7 @@ export default function RootLayout({
       <body>
         <nav>
           <Link href="/" className="logo">
-            ToolIndex
+            Web MCP Registry
           </Link>
           <Link href="/">Search</Link>
           <Link href="/submit">Submit</Link>
