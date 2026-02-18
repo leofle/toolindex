@@ -11,7 +11,7 @@ function normalizeOrigin(raw: string): string {
   let o = raw.trim().replace(/\/+$/, "");
   if (!/^https?:\/\//.test(o)) o = `https://${o}`;
   const url = new URL(o);
-  return `${url.protocol}//${url.host}`;
+  return `${url.protocol}//${url.host}${url.pathname}`.replace(/\/+$/, "");
 }
 
 export async function registerRoutes(app: FastifyInstance) {
