@@ -31,11 +31,35 @@ export default function Home() {
   return (
     <div>
       <h1 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
-        WebMCP Registry
+        Web MCP Registry
       </h1>
       <p className="muted" style={{ marginBottom: "1.5rem" }}>
-        Discover and verify WebMCP tool manifests
+        The public registry for{" "}
+        <a href="https://spec.webmcp.org" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
+          WebMCP
+        </a>{" "}
+        tool manifests
       </p>
+
+      <div className="card" style={{ marginBottom: "2rem" }}>
+        <p style={{ fontSize: "0.9rem", lineHeight: 1.6, marginBottom: "0.75rem" }}>
+          <a href="https://spec.webmcp.org" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>WebMCP</a> is
+          an open standard that lets any website publish a machine-readable manifest of the tools it offers to AI
+          agents — things like APIs, actions, and data lookups — in a single JSON file at{" "}
+          <code>/.well-known/webmcp.json</code>.
+        </p>
+        <p style={{ fontSize: "0.9rem", lineHeight: 1.6, marginBottom: "0.75rem" }}>
+          This registry crawls, validates, and indexes those manifests so that AI agents, developers,
+          and platforms can <strong>discover</strong> what tools exist across the web,{" "}
+          <strong>verify</strong> they conform to the spec, and <strong>trust</strong> them with
+          a verified badge.
+        </p>
+        <p style={{ fontSize: "0.9rem", lineHeight: 1.6 }}>
+          Without a central registry, every agent would need to know tool URLs in advance.
+          With it, any agent can search for tools by name or tag — making the web a self-describing
+          toolbox for AI.
+        </p>
+      </div>
 
       <input
         type="search"
