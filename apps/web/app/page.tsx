@@ -4,29 +4,53 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { API_BASE } from "./api-client";
 
-interface SearchResult {
-  origin: string;
-  status: string;
-  tool_count: number;
-  top_tools: string[];
+interface ToolSearchResult {
+  score: number;
+  trust: { total: number; breakdown: Record<string, number> };
+  relevance: { total: number; breakdown: Record<string, number> };
+  tool: {
+    name: string;
+    description: string;
+    version: string;
+    tags: string[];
+    risk_level: string;
+    requires_user_confirm: boolean;
+    pricing_model: string | null;
+    pricing_price_usd: number | null;
+  };
+  origin: {
+    origin: string;
+    status: string;
+    attested: boolean;
+    requires_auth: boolean;
+    trust_score: number;
+  };
 }
 
 export default function Home() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [riskFilter, setRiskFilter] = useState("");
+  const [pricingFilter, setPricingFilter] = useState("");
+  const [authFilter, setAuthFilter] = useState("");
+  const [results, setResults] = useState<ToolSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(true);
-      fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`)
+      const params = new URLSearchParams();
+      if (query) params.set("q", query);
+      if (riskFilter) params.set("risk", riskFilter);
+      if (pricingFilter) params.set("pricing", pricingFilter);
+      if (authFilter) params.set("auth", authFilter);
+      fetch(`${API_BASE}/tools/search?${params}`)
         .then((r) => r.json())
         .then(setResults)
         .catch(() => setResults([]))
         .finally(() => setLoading(false));
     }, 300);
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [query, riskFilter, pricingFilter, authFilter]);
 
   return (
     <div>
@@ -63,18 +87,50 @@ export default function Home() {
 
       <input
         type="search"
-        placeholder="Search by origin, tool name, or tag..."
+        placeholder="Search tools by name, description, or tag..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        style={{ marginBottom: "1.5rem" }}
+        style={{ marginBottom: "0.75rem" }}
       />
+
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
+        <select
+          value={riskFilter}
+          onChange={(e) => setRiskFilter(e.target.value)}
+          style={{ fontSize: "0.85rem", padding: "0.4rem 0.6rem" }}
+        >
+          <option value="">All risk levels</option>
+          <option value="low">Low risk</option>
+          <option value="medium">Medium risk</option>
+          <option value="high">High risk</option>
+        </select>
+        <select
+          value={pricingFilter}
+          onChange={(e) => setPricingFilter(e.target.value)}
+          style={{ fontSize: "0.85rem", padding: "0.4rem 0.6rem" }}
+        >
+          <option value="">All pricing</option>
+          <option value="free">Free</option>
+          <option value="per_call">Per call</option>
+          <option value="subscription">Subscription</option>
+        </select>
+        <select
+          value={authFilter}
+          onChange={(e) => setAuthFilter(e.target.value)}
+          style={{ fontSize: "0.85rem", padding: "0.4rem 0.6rem" }}
+        >
+          <option value="">Any auth</option>
+          <option value="false">No auth required</option>
+          <option value="true">Auth required</option>
+        </select>
+      </div>
 
       {loading && <p className="muted">Searching...</p>}
 
-      {results.map((r) => (
+      {results.map((r, i) => (
         <Link
-          key={r.origin}
-          href={`/origin/${encodeURIComponent(r.origin)}`}
+          key={`${r.origin.origin}-${r.tool.name}-${i}`}
+          href={`/origin/${encodeURIComponent(r.origin.origin)}`}
           style={{ textDecoration: "none", color: "inherit" }}
         >
           <div className="card" style={{ cursor: "pointer" }}>
@@ -86,21 +142,47 @@ export default function Home() {
                 marginBottom: "0.4rem",
               }}
             >
-              <strong>{r.origin}</strong>
-              <span className={`status status-${r.status}`}>{r.status}</span>
+              <strong>{r.tool.name}</strong>
+              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                <span
+                  style={{
+                    background: r.score >= 70 ? "var(--green)" : r.score >= 40 ? "var(--amber)" : "var(--red)",
+                    color: "#fff",
+                    fontSize: "0.75rem",
+                    padding: "2px 8px",
+                    borderRadius: "9999px",
+                    fontWeight: 600,
+                  }}
+                >
+                  {r.score}
+                </span>
+                <span className={`status status-${r.origin.status}`}>{r.origin.status}</span>
+              </div>
             </div>
-            <p className="muted">
-              {r.tool_count} tool{r.tool_count !== 1 ? "s" : ""}
-              {r.top_tools.length > 0 && ` — ${r.top_tools.join(", ")}`}
-            </p>
+            <p className="muted" style={{ marginBottom: "0.5rem" }}>{r.tool.description}</p>
+            <div style={{ display: "flex", gap: "0.75rem", fontSize: "0.78rem", color: "var(--text-dim)", flexWrap: "wrap" }}>
+              <span className={`status risk-${r.tool.risk_level}`} style={{ background: "transparent", padding: 0, fontSize: "0.78rem" }}>
+                {r.tool.risk_level}
+              </span>
+              {r.tool.pricing_model && (
+                <span>{r.tool.pricing_model}{r.tool.pricing_price_usd != null ? ` $${r.tool.pricing_price_usd}` : ""}</span>
+              )}
+              {!r.tool.pricing_model && <span>free</span>}
+              {r.tool.tags.map((tag) => (
+                <span key={tag} style={{ color: "var(--accent)", background: "var(--accent-bg)", padding: "1px 8px", borderRadius: "9999px" }}>
+                  {tag}
+                </span>
+              ))}
+              <span className="muted" style={{ marginLeft: "auto" }}>{r.origin.origin}</span>
+            </div>
           </div>
         </Link>
       ))}
 
       {!loading && results.length === 0 && (
         <p className="muted" style={{ textAlign: "center", marginTop: "2rem" }}>
-          No origins found.{" "}
-          <Link href="/submit">Submit one</Link> to get started.
+          No tools found.{" "}
+          <Link href="/submit">Submit an origin</Link> to get started.
         </p>
       )}
     </div>

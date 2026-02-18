@@ -11,15 +11,26 @@ interface ToolInfo {
   tags: string[];
   risk_level: string;
   requires_user_confirm: boolean;
+  pricing_model: string | null;
+  pricing_price_usd: number | null;
 }
 
 interface OriginData {
   origin: string;
   status: string;
   attested: boolean;
+  requires_auth: boolean;
   first_seen: string;
   last_checked: string;
   last_error: string | null;
+  trust_score: number;
+  trust_breakdown: Record<string, number>;
+  checks_summary: {
+    total: number;
+    ok: number;
+    uptime_percent: number | null;
+    avg_latency_ms: number | null;
+  };
   manifest: any;
   tools: ToolInfo[];
 }
@@ -83,6 +94,47 @@ export default function OriginPage() {
         </div>
       )}
 
+      {/* Trust Score Card */}
+      <div className="card">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+          <p className="section-title" style={{ margin: 0 }}>Trust Score</p>
+          <span
+            style={{
+              background: data.trust_score >= 70 ? "var(--green)" : data.trust_score >= 40 ? "var(--amber)" : "var(--red)",
+              color: "#fff",
+              fontSize: "1.1rem",
+              padding: "4px 14px",
+              borderRadius: "9999px",
+              fontWeight: 700,
+            }}
+          >
+            {data.trust_score}
+          </span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.4rem", fontSize: "0.85rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span className="muted">Uptime</span>
+            <span>{data.checks_summary.uptime_percent != null ? `${data.checks_summary.uptime_percent}%` : "—"}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span className="muted">Avg latency</span>
+            <span>{data.checks_summary.avg_latency_ms != null ? `${data.checks_summary.avg_latency_ms}ms` : "—"}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span className="muted">Attested</span>
+            <span>{data.attested ? "Yes" : "No"}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span className="muted">Auth required</span>
+            <span>{data.requires_auth ? "Yes" : "No"}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span className="muted">Checks</span>
+            <span>{data.checks_summary.total} ({data.checks_summary.ok} ok)</span>
+          </div>
+        </div>
+      </div>
+
       <div className="card">
         <p className="section-title">Info</p>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.9rem", marginBottom: "0.3rem" }}>
@@ -141,6 +193,14 @@ export default function OriginPage() {
             <span>v{t.version}</span>
             {t.requires_user_confirm && (
               <span style={{ color: "var(--amber)" }}>Requires confirm</span>
+            )}
+            {t.pricing_model && (
+              <span style={{ color: "var(--accent)" }}>
+                {t.pricing_model}{t.pricing_price_usd != null ? ` $${t.pricing_price_usd}` : ""}
+              </span>
+            )}
+            {!t.pricing_model && (
+              <span style={{ color: "var(--green)" }}>free</span>
             )}
             {t.tags.map((tag) => (
               <span key={tag} style={{ color: "var(--accent)", background: "var(--accent-bg)", padding: "1px 8px", borderRadius: "9999px" }}>

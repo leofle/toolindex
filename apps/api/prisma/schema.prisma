@@ -12,6 +12,7 @@ model Origin {
   origin       String   @unique
   status       String   @default("invalid") // verified | invalid | stale
   attested     Boolean  @default(false)
+  requiresAuth Boolean  @default(false)
   firstSeen    DateTime @default(now())
   lastChecked  DateTime @default(now())
   lastError    String?
@@ -30,6 +31,8 @@ model Tool {
   tags               String  // JSON array stored as string
   riskLevel          String
   requiresUserConfirm Boolean
+  pricingModel        String?
+  pricingPriceUsd     Float?
 
   origin Origin @relation(fields: [originId], references: [id], onDelete: Cascade)
 
