@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/user/toolindex",
+    "url": "git+https://github.com/user/toolindex.git",
     "directory": "tools/cli"
   },
   "keywords": [
@@ -17,7 +17,7 @@
     "validation"
   ],
   "bin": {
-    "webmcpreg": "./dist/webmcpreg.js"
+    "webmcpreg": "dist/webmcpreg.js"
   },
   "files": [
     "dist"
