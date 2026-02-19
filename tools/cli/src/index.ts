@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { validate } from "./commands/validate";
 import { publish } from "./commands/publish";
 import { check } from "./commands/check";
@@ -21,32 +19,32 @@ switch (command) {
     break;
   case "--version":
   case "-v":
-    console.log(`webmcp v${VERSION}`);
+    console.log(`webmcpreg v${VERSION}`);
     break;
   case "--help":
   case "-h":
   case undefined:
     console.log(`
-webmcp — CLI for the Web MCP Registry
+webmcpreg — CLI for the Web MCP Registry
 
 Usage:
-  webmcp validate [path|url]   Validate a webmcp.json manifest
-  webmcp publish <origin>      Submit an origin to the registry
-  webmcp check <origin>        Check an origin's registry status
+  webmcpreg validate [path|url]   Validate a webmcp.json manifest
+  webmcpreg publish <origin>      Submit an origin to the registry
+  webmcpreg check <origin>        Check an origin's registry status
 
 Options:
-  -v, --version                Show version
-  -h, --help                   Show this help
+  -v, --version                   Show version
+  -h, --help                      Show this help
 
 Examples:
-  webmcp validate .well-known/webmcp.json
-  webmcp validate https://example.com/.well-known/webmcp.json
-  webmcp publish https://example.com
-  webmcp check https://example.com
+  webmcpreg validate .well-known/webmcp.json
+  webmcpreg validate https://example.com/.well-known/webmcp.json
+  webmcpreg publish https://example.com
+  webmcpreg check https://example.com
 `.trim());
     break;
   default:
     console.error(`Unknown command: ${command}`);
-    console.error("Run 'webmcp --help' for usage.");
+    console.error("Run 'webmcpreg --help' for usage.");
     process.exit(1);
 }

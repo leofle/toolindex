@@ -4,8 +4,8 @@ const API_BASE = "https://toolindex-api-production.up.railway.app";
 
 export async function publish(origin?: string): Promise<void> {
   if (!origin) {
-    console.error(chalk.red("\u2718 Usage: webmcp publish <origin>"));
-    console.error(chalk.dim("  Example: webmcp publish https://example.com"));
+    console.error(chalk.red("\u2718 Usage: webmcpreg publish <origin>"));
+    console.error(chalk.dim("  Example: webmcpreg publish https://example.com"));
     process.exit(1);
   }
 

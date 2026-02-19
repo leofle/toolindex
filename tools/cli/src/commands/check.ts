@@ -4,8 +4,8 @@ const API_BASE = "https://toolindex-api-production.up.railway.app";
 
 export async function check(origin?: string): Promise<void> {
   if (!origin) {
-    console.error(chalk.red("\u2718 Usage: webmcp check <origin>"));
-    console.error(chalk.dim("  Example: webmcp check https://example.com"));
+    console.error(chalk.red("\u2718 Usage: webmcpreg check <origin>"));
+    console.error(chalk.dim("  Example: webmcpreg check https://example.com"));
     process.exit(1);
   }
 

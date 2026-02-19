@@ -15,7 +15,7 @@ export default function CLIPage() {
           Run commands directly with <code>npx</code> — no install needed:
         </p>
         <pre style={{ fontSize: "0.78rem" }}>
-          <code>npx webmcp --help</code>
+          <code>npx webmcpreg --help</code>
         </pre>
         <p
           style={{
@@ -27,7 +27,19 @@ export default function CLIPage() {
           Or install globally:
         </p>
         <pre style={{ fontSize: "0.78rem" }}>
-          <code>npm install -g webmcp</code>
+          <code>npm install -g webmcpreg</code>
+        </pre>
+      </div>
+
+      <div className="card" style={{ marginBottom: "1.5rem" }}>
+        <p className="section-title">Install via Homebrew</p>
+        <p style={{ fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+          On macOS (or Linux with Homebrew), you can install with{" "}
+          <code>brew</code>:
+        </p>
+        <pre style={{ fontSize: "0.78rem", marginBottom: "0.5rem" }}>
+          <code>{`brew tap nichochar/toolindex https://github.com/nichochar/toolindex
+brew install webmcpreg`}</code>
         </pre>
       </div>
 
@@ -39,13 +51,13 @@ export default function CLIPage() {
         </p>
         <pre style={{ fontSize: "0.78rem", marginBottom: "0.5rem" }}>
           <code>{`# Validate a local file
-webmcp validate .well-known/webmcp.json
+webmcpreg validate .well-known/webmcp.json
 
 # Validate from a URL
-webmcp validate https://example.com/.well-known/webmcp.json
+webmcpreg validate https://example.com/.well-known/webmcp.json
 
 # Default: validates .well-known/webmcp.json in cwd
-webmcp validate`}</code>
+webmcpreg validate`}</code>
         </pre>
         <p style={{ fontSize: "0.85rem", color: "var(--text-dim)" }}>
           Exit code 0 on success, 1 on failure — CI-friendly.
@@ -59,7 +71,7 @@ webmcp validate`}</code>
           and validate your manifest automatically.
         </p>
         <pre style={{ fontSize: "0.78rem" }}>
-          <code>webmcp publish https://example.com</code>
+          <code>webmcpreg publish https://example.com</code>
         </pre>
       </div>
 
@@ -70,7 +82,7 @@ webmcp validate`}</code>
           status.
         </p>
         <pre style={{ fontSize: "0.78rem" }}>
-          <code>webmcp check https://example.com</code>
+          <code>webmcpreg check https://example.com</code>
         </pre>
       </div>
 
@@ -83,7 +95,7 @@ webmcp validate`}</code>
         <pre style={{ fontSize: "0.78rem" }}>
           <code>{`# GitHub Actions example
 - name: Validate WebMCP manifest
-  run: npx webmcp validate .well-known/webmcp.json`}</code>
+  run: npx webmcpreg validate .well-known/webmcp.json`}</code>
         </pre>
         <p
           style={{

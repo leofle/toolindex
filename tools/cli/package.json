@@ -1,13 +1,35 @@
 {
-  "name": "webmcp",
+  "name": "webmcpreg",
   "version": "0.1.0",
-  "description": "CLI tool for validating and publishing WebMCP manifests",
+  "description": "CLI tool for validating and publishing WebMCP manifests to the Web MCP Registry",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/user/toolindex",
+    "directory": "tools/cli"
+  },
+  "keywords": [
+    "webmcp",
+    "mcp",
+    "manifest",
+    "registry",
+    "cli",
+    "validation"
+  ],
   "bin": {
-    "webmcp": "./dist/index.js"
+    "webmcpreg": "./dist/webmcpreg.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node18 --outfile=dist/webmcpreg.js --banner:js='#!/usr/bin/env node'",
+    "dev": "tsc --watch --noEmit",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@toolindex/validator": "workspace:*",
@@ -15,6 +37,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "esbuild": "^0.24.0",
     "typescript": "^5.7.0"
   }
 }
