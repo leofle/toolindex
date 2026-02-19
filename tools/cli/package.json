@@ -1,13 +1,9 @@
 {
   "name": "webmcpreg",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI tool for validating and publishing WebMCP manifests to the Web MCP Registry",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/user/toolindex.git",
-    "directory": "tools/cli"
-  },
+  "homepage": "https://webmcpregistry.org/cli",
   "keywords": [
     "webmcp",
     "mcp",
@@ -20,7 +16,8 @@
     "webmcpreg": "dist/webmcpreg.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "engines": {
     "node": ">=18"

@@ -2,7 +2,7 @@ import { validate } from "./commands/validate";
 import { publish } from "./commands/publish";
 import { check } from "./commands/check";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 
 const command = process.argv[2];
 const arg = process.argv[3];
