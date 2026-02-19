@@ -21,6 +21,7 @@ export default function RootLayout({
           </Link>
           <Link href="/">Search</Link>
           <Link href="/submit">Submit</Link>
+          <Link href="/cli">CLI</Link>
         </nav>
         <main className="container">{children}</main>
       </body>

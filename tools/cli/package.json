@@ -1,0 +1,20 @@
+{
+  "name": "webmcp",
+  "version": "0.1.0",
+  "description": "CLI tool for validating and publishing WebMCP manifests",
+  "bin": {
+    "webmcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@toolindex/validator": "workspace:*",
+    "chalk": "^4.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.7.0"
+  }
+}
