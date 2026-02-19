@@ -1,8 +1,8 @@
 class Webmcpreg < Formula
   desc "CLI tool for validating and publishing WebMCP manifests"
-  homepage "https://webmcp.org/cli"
-  url "https://registry.npmjs.org/webmcpreg/-/webmcpreg-0.1.0.tgz"
-  sha256 ""
+  homepage "https://webmcpregistry.org/cli"
+  url "https://registry.npmjs.org/webmcpreg/-/webmcpreg-0.1.1.tgz"
+  sha256 "ef9ddce8a30deee1072a5fe2921cc2e31308728546ba66a3c8dac6308ec680fb"
   license "MIT"
 
   depends_on "node"
