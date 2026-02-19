@@ -1,6 +1,6 @@
 {
   "name": "webmcpreg",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CLI tool for validating and publishing WebMCP manifests to the Web MCP Registry",
   "license": "MIT",
   "homepage": "https://webmcpregistry.org/cli",
@@ -28,12 +28,10 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "dependencies": {
-    "@toolindex/validator": "workspace:*",
-    "chalk": "^4.1.2"
-  },
   "devDependencies": {
+    "@toolindex/validator": "workspace:*",
     "@types/node": "^20.0.0",
+    "chalk": "^4.1.2",
     "esbuild": "^0.24.0",
     "typescript": "^5.7.0"
   }

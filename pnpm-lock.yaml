@@ -104,17 +104,16 @@ importers:
         version: 5.9.3
 
   tools/cli:
-    dependencies:
+    devDependencies:
       '@toolindex/validator':
         specifier: workspace:*
         version: link:../../packages/validator
-      chalk:
-        specifier: ^4.1.2
-        version: 4.1.2
-    devDependencies:
       '@types/node':
         specifier: ^20.0.0
         version: 20.19.33
+      chalk:
+        specifier: ^4.1.2
+        version: 4.1.2
       esbuild:
         specifier: ^0.24.0
         version: 0.24.2
